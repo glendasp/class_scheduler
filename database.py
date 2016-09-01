@@ -59,3 +59,12 @@ class DatabaseManager:
         query = 'INSERT INTO Student_Course VALUES (?, ?)'
         cur.execute(query, (student.id, course.id))
         self.conn.commit()
+
+    def drop_course(self, student, course):
+        """ Drop the course from the course list for the student."""
+        cur = self.conn.cursor()
+        query = 'DELETE FROM Student_Course' \
+                ' WHERE course.id = ? ' \
+                'AND  student.id = ?'
+        cur.execute(query, (student.id, course.id))
+        self.conn.commit()

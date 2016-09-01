@@ -1,24 +1,14 @@
-"""Plain-old objects for handling information from the database."""
+"""These classes are used to help bundle the data from the database."""
+
+
+class Student:
+    def __init__(self, student_id, first_name, last_name):
+        self.id = student_id
+        self.first_name = first_name
+        self.last_name = last_name
 
 
 class Course:
-    """Information about a course.
-
-    Args:
-        id (int): Course ID
-        title (str): Name of the course.
-        instructor_name (int): Instructor first and last name.
-        days (list of str): Days when the course happens.
-        time (str): Time of day for the course.
-
-    """
-
-
-class CourseSchedule:
-    """Information about a student's course schedule.
-
-    Args:
-        student_name (str): Student's first and last name.
-        courses (list of :obj:`course`):
-
-    """
+    def __init__(self, course_id, name):
+        self.id = course_id
+        self.name = name

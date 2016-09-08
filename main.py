@@ -10,13 +10,13 @@ def main_menu(student):
         '\nMAIN MENU\n'
         'Student: {} {}\n'
         '\t1) Register Course\n'
-        '\t2)Drop Course\n'
+        '\t2) Drop Course\n'
         '\t3) Quit\n'
         'Enter Selection'
     ).format(student.first_name, student.last_name)
 
     while True:
-        menu_choice = get_user_int(menu_string, range(1, 6))
+        menu_choice = get_user_int(menu_string, range(1, 4))
 
         if menu_choice == 1:
             register_course_menu(student)

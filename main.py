@@ -2,6 +2,7 @@ from database import DatabaseManager
 
 # TODO: Might need a redesign if we want to get rid of this global.
 db = DatabaseManager('School.db')
+db.setup_db()
 
 
 def main_menu(student):

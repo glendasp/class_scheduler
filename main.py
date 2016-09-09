@@ -57,11 +57,15 @@ def register_course_menu(student):
 
 def drop_student_course_(student):
     drop_question = 'Enter course id to drop from the course list'
-    while True:
-        drop_course_id = get_user_int(drop_question, None)
-        courses_drop = db.drop_course(student.id, drop_course_id)
-        print(courses_drop + "has been dropped from your current course list")
-        return
+    drop_course_id = get_user_int(drop_question)
+    drop_course = db.get_course(drop_course_id)
+    if drop_course:
+        db.drop_course(student.id, drop_course_id)
+        print(drop_course.name + "has been dropped from your current course list")
+    else:
+            print("No course found with that ID")
+
+    return
 
 
 def search_for_course(student):

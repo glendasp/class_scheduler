@@ -7,12 +7,12 @@ db.setup_db()
 
 def main_menu(student):
     menu_string = (
-        '\nMAIN MENU\n'
-        'Student: {} {}\n'
+        '\n\t** MAIN MENU **\n'
+        '\nStudent: {} {}\n'
         '\t1) Register Course\n'
         '\t2) Drop Course\n'
         '\t3) Quit\n'
-        'Enter Selection'
+        '\nEnter Selection'
     ).format(student.first_name, student.last_name)
 
     while True:
@@ -32,7 +32,7 @@ def register_course_menu(student):
         '\t1) By Course ID\n'
         '\t2) Search for Course by Name\n'
         '\t3) Back\n'
-        'Enter Selection'
+        '\nEnter Selection'
     )
 
     while True:
@@ -43,12 +43,14 @@ def register_course_menu(student):
             course = db.get_course(course_id)
             if course:
                 db.register_course(student, course)
+                print('\n --> ' + student.first_name + ' was successfully added to the class <--')
             else:
                 print('No course found with id:', course_id)
         elif menu_choice == 2:
-            course = search_for_course()
+            course = search_for_course(student)
             if course:
                 db.register_course(student, course)
+                print('\n --> ' + student.first_name + ' was successfully added to the class <--')
         elif menu_choice == 3:
             return
 
@@ -62,7 +64,7 @@ def drop_student_course_(student):
         return
 
 
-def search_for_course():
+def search_for_course(student):
     course_name = get_user_string('Enter Course Name')
     courses = db.get_courses_by_name(course_name)
 
@@ -76,11 +78,11 @@ def search_for_course():
     while True:
         course_count = len(courses)
 
-        menu_string = 'Select a course\n'
+        menu_string = '\nSelect a course\n'
         for n, course in enumerate(courses):
             menu_string += '\t{}) {}\n'.format(n + 1, course.name)
         menu_string += '\t{}) Back\n'.format(course_count + 1)
-        menu_string += 'Select a Course'
+        menu_string += '\nSelect a Course'
 
         menu_choice = get_user_int(menu_string, range(1, course_count + 2))
 
@@ -156,6 +158,6 @@ def main():
     if student:
         main_menu(student)
 
-    print('GoodBye!')
+    print('\n ** GoodBye! **')
 
 main()

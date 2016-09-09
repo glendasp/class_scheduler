@@ -1,5 +1,5 @@
 import sqlite3
-from models import Student, Course
+from models import Student, Course, Instructor
 
 # TODO: Needs a lot of exception handling!!!
 # A general helper method that does all the dirty work might be useful.
@@ -70,7 +70,8 @@ class DatabaseManager:
 
         row = cur.fetchone()
         if row:
-            return Student(row[0], row[1], row[2])
+            student_id, first_name, last_name = (row[0], row[1], row[2])
+            return Student(student_id, first_name, last_name)
 
         return None
 
@@ -82,7 +83,9 @@ class DatabaseManager:
 
         row = cur.fetchone()
         if row:
-            return Course(row[0], row[1])
+            course_id, course_name, instructor_id = (row[0], row[1], row[2])
+            instructor = self.get_instructor(instructor_id)
+            return Course(course_id, course_name, instructor)
 
         return None
 
@@ -95,9 +98,24 @@ class DatabaseManager:
 
         courses = []
         for row in cur:
-            courses.append(Course(row[0], row[1]))
+            course_id, course_name, instructor_id = (row[0], row[1], row[2])
+            instructor = self.get_instructor(instructor_id)
+            courses.append(Course(course_id, course_name, instructor))
 
         return courses
+
+    def get_instructor(self, instructor_id):
+        """Return an Instructor object if it exists, None otherwise."""
+        cur = self.conn.cursor()
+        query = 'SELECT ROWID, * FROM Instructor WHERE ROWID = ?'
+        cur.execute(query, (instructor_id, ))
+
+        row = cur.fetchone()
+        if row:
+            instructor_id, first_name, last_name = (row[0], row[1], row[2])
+            return Instructor(instructor_id, first_name, last_name)
+
+        return None
 
     def register_course(self, student, course):
         """Register the Student to the Course."""

@@ -65,8 +65,6 @@ def drop_student_course_(student):
     else:
             print("No course found with that ID")
 
-    return
-
 
 def search_for_course(student):
     course_name = get_user_string('Enter Course Name')

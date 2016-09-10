@@ -59,14 +59,26 @@ def register_course_menu(student):
 
 
 def drop_student_course_(student):
-    drop_question = 'Enter course id to drop from the course list'
-    drop_course_id = get_user_int(drop_question)
-    drop_course = db.get_course(drop_course_id)
-    if drop_course:
-        db.drop_course(student.id, drop_course_id)
-        print(drop_course.name + "has been dropped from your current course list")
+    student_course_list = db.get_course_by_student_id(student.id)
+
+    if len(student_course_list) == 0:
+        print(student.full_name + " does not have any course in the list yet")
+        return
     else:
-            print("No course found with that ID")
+        print("The current course list for " + student.full_name)
+    for course in student_course_list:
+        print("\t{}.{} ".format(course.id, course.name))
+
+    while True:
+        drop_question = 'Enter course id to drop from the given course list'
+        drop_course_id = get_user_int(drop_question)
+        student_course_idlist = [course.id for course in student_course_list]
+        if drop_course_id in student_course_idlist:
+            db.drop_course(student.id, drop_course_id)
+            print(str(db.get_course(drop_course_id).name) + " has been dropped from your current course list")
+            break
+        else:
+            print(" No course found with that ID in the list !!! please check the list carefully")
 
 
 def display_schedule(student):

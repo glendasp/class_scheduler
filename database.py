@@ -75,6 +75,15 @@ class DatabaseManager:
             INSERT INTO Instructor VALUES (4, 'Joan', 'Carter');
             INSERT INTO Instructor VALUES (5, 'Richard', 'Pollak');
             INSERT INTO Instructor VALUES (6, 'Eric', 'Level');
+
+            INSERT INTO Student_Course VALUES (4, 5);
+            INSERT INTO Student_Course VALUES (4, 6);
+            INSERT INTO Student_Course VALUES (5, 5);
+            INSERT INTO Student_Course VALUES (5, 6);
+            INSERT INTO Student_Course VALUES (8, 6);
+            INSERT INTO Student_Course VALUES (8, 7);
+            INSERT INTO Student_Course VALUES (7, 6);
+            INSERT INTO Student_Course VALUES (7, 8);
         '''
 
         try:

@@ -11,18 +11,21 @@ def main_menu(student):
         '\nStudent: {} {}\n'
         '\t1) Register Course\n'
         '\t2) Drop Course\n'
-        '\t3) Quit\n'
+        '\t3) Display Schedule\n'
+        '\t4) Quit\n'
         '\nEnter Selection'
     ).format(student.first_name, student.last_name)
 
     while True:
-        menu_choice = get_user_int(menu_string, range(1, 4))
+        menu_choice = get_user_int(menu_string, range(1, 5))
 
         if menu_choice == 1:
             register_course_menu(student)
         elif menu_choice == 2:
             drop_student_course_(student)
         elif menu_choice == 3:
+            display_schedule(student)
+        elif menu_choice == 4:
             break
 
 
@@ -64,6 +67,14 @@ def drop_student_course_(student):
         print(drop_course.name + "has been dropped from your current course list")
     else:
             print("No course found with that ID")
+
+
+def display_schedule(student):
+    course_info = db.get_course_by_student_id(student.id)
+    print("Your schedule for fall 2016:")
+    for course in course_info:
+        print("\t{} ({})"
+              .format(course.name, course.instructor.full_name))
 
 
 def search_for_course(student):

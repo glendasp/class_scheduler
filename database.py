@@ -104,6 +104,19 @@ class DatabaseManager:
 
         return courses
 
+    def get_course_by_student_id(self, student_id):
+        """Return a student's list of Courses """
+        cur = self.conn.cursor()
+        query = 'SELECT * FROM Student_Course WHERE StudentID LIKE ?'
+        cur.execute(query, (student_id,))
+
+        courses_list = []
+        for row in cur.fetchall():
+            course_id = row[1]
+            courses_list.append(self.get_course(course_id))
+
+        return courses_list
+
     def get_instructor(self, instructor_id):
         """Return an Instructor object if it exists, None otherwise."""
         cur = self.conn.cursor()

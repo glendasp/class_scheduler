@@ -140,7 +140,7 @@ class DatabaseManager:
             'JOIN Instructor ON Course.InstructorNum = Instructor.InstructorNum '
             'WHERE UPPER(Name) LIKE ?'
         )
-        cur.execute(query, (course_name.upper(),))
+        cur.execute(query, ('%{}%'.format(course_name.upper()),))
 
         courses = []
         for row in cur:

@@ -83,10 +83,13 @@ def drop_student_course_(student):
 
 def display_schedule(student):
     course_info = db.get_course_by_student_id(student.id)
-    print("Your schedule for fall 2016:")
-    for course in course_info:
-        print("\t{} ({})"
-              .format(course.name, course.instructor.full_name))
+
+    if len(course_info) == 0:
+        print(student.full_name + " does not have any course in the list yet")
+    else:
+        print("Your schedule for fall 2016:")
+        for course in course_info:
+            print("\t{} ({})".format(course.name, course.instructor.full_name))
 
 
 def search_for_course(student):
@@ -99,18 +102,14 @@ def search_for_course(student):
         # them to try again.  This gets messy pretty fast unless we figure out
         # a better way to do these menus.
         return
-
     while True:
         course_count = len(courses)
-
         menu_string = '\nSelect a course\n'
         for n, course in enumerate(courses):
             menu_string += '\t{}) {}\n'.format(n + 1, course.name)
         menu_string += '\t{}) Back\n'.format(course_count + 1)
         menu_string += '\nSelect a Course'
-
         menu_choice = get_user_int(menu_string, range(1, course_count + 2))
-
         if menu_choice <= course_count:
             return courses[menu_choice - 1]
         else:

@@ -14,49 +14,68 @@ class DatabaseManager:
 
     def setup_db(self):
         sql_script = '''
-        CREATE TABLE Student (
-          Firstname TEXT,
-          Lastname TEXT
-        );
+            CREATE TABLE Student (
+              Firstname TEXT,
+              Lastname TEXT
+            );
 
-        CREATE TABLE Course (
-          Name TEXT,
-          InstructorID REFERENCES Instructor(ROWID)
-        );
+            CREATE TABLE Course (
+              Name TEXT,
+              InstructorID REFERENCES Instructor(ROWID)
+            );
 
-        CREATE TABLE Instructor (
-          Firstname TEXT,
-          Lastname TEXT
-        );
+            CREATE TABLE Instructor (
+              Firstname TEXT,
+              Lastname TEXT
+            );
 
-        CREATE TABLE Student_Course (
-          StudentID REFERENCES Student(ROWID),
-          CourseID REFERENCES Course(ROWID)
-        );
+            CREATE TABLE Student_Course (
+              StudentID REFERENCES Student(ROWID),
+              CourseID REFERENCES Course(ROWID)
+            );
 
-        INSERT into Student VALUES ('David', 'Oser');
-        INSERT into Student VALUES ('Diana', 'smith');
-        INSERT into Student VALUES ('Sarah', 'Mcarthy');
-        INSERT into Student VALUES ('chitra', 'Kakkar');
+            INSERT INTO Student VALUES ('David', 'Oser');
+            INSERT INTO Student VALUES ('Diana', 'smith');
+            INSERT INTO Student VALUES ('Sarah', 'Mcarthy');
+            INSERT INTO Student VALUES ('Chitra', 'Kakkar');
+            INSERT INTO Student VALUES ('Glenda', 'Pinho');
+            INSERT INTO Student VALUES ('Eva', 'Mendes');
+            INSERT INTO Student VALUES ('Mason', 'Elmore');
+            INSERT INTO Student VALUES ('Yannick', 'Idrissa');
+            INSERT INTO Student VALUES ('Marian', 'Abshir');
+            INSERT INTO Student VALUES ('Branden', 'Adams');
+            INSERT INTO Student VALUES ('Anna', 'Dudda');
+            INSERT INTO Student VALUES ('Federico', 'Fernandez Diaz');
+            INSERT INTO Student VALUES ('Joe', 'Lee');
+            INSERT INTO Student VALUES ('Malcolm', 'Leehan');
+            INSERT INTO Student VALUES ('Timothy', 'Milligan');
+            INSERT INTO Student VALUES ('Robert', 'Williams');
+            INSERT INTO Student VALUES ('Malcolm', 'Leehan');
 
-        INSERT INTO Course VALUES ('Capstone', 1);
-        INSERT INTO Course VALUES ('Java',2);
-        INSERT INTO Course VALUES ('C#', 3);
-        INSERT INTO Course VALUES ('Python', 4);
+            INSERT INTO Course VALUES ('Capstone', 1);
+            INSERT INTO Course VALUES ('Java',2);
+            INSERT INTO Course VALUES ('C#', 3);
+            INSERT INTO Course VALUES ('Python', 4);
+            INSERT INTO Course VALUES ('SQL', 1);
+            INSERT INTO Course VALUES ('Software Development Capstone', 1);
+            INSERT INTO Course VALUES ('Microsoft Windows Operating Systems', 5);
+            INSERT INTO Course VALUES ('Programming Logic and Design', 6);
 
-        INSERT into Instructor VALUES ('Andy', 'Chrastek');
-        INSERT into Instructor VALUES ('Eric', 'Level');
-        INSERT into Instructor VALUES ('Clara', 'James');
-        INSERT into Instructor VALUES ('Joan', 'Carter');
+            INSERT INTO Instructor VALUES ('Andy', 'Chrastek');
+            INSERT INTO Instructor VALUES ('Eric', 'Level');
+            INSERT INTO Instructor VALUES ('Clara', 'James');
+            INSERT INTO Instructor VALUES ('Joan', 'Carter');
+            INSERT INTO Instructor VALUES ('Richard', 'Pollak');
+            INSERT INTO Instructor VALUES ('Eric', 'Level');
         '''
 
         try:
-            print('Creating tables')
+            print('Creating tables...')
             self.conn = sqlite3.connect('School.db')
             self.conn.executescript(sql_script)
+            print("Table successfully created")
         except sqlite3.OperationalError as oe:
             print('Error:', oe)
-            print("Aborting")
 
     def get_student(self, student_id):
         """Return a Student object if they exist, None otherwise."""

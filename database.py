@@ -1,3 +1,9 @@
+"""
+This class sets up the database and creates required tables.  It also deals with
+different methods to get data from the data base using queries.
+
+"""
+
 import sqlite3
 from models import Student, Course, Instructor
 
@@ -14,6 +20,9 @@ class DatabaseManager:
         self.conn = sqlite3.connect(filename)
 
     def setup_db(self):
+        # Run a SQL script where a set of commands are saved in a
+        # file/string/script creates tables and inserts value. Has a
+        # composite table with composite primary key (Student_Course).
         sql_script = '''
             CREATE TABLE Student (
               StudentNum INT PRIMARY KEY,
@@ -95,7 +104,8 @@ class DatabaseManager:
             print('Error:', oe)
 
     def get_student(self, student_id):
-        """Return a Student object if they exist, None otherwise."""
+        """Return a Student object from the ID if they exist, None otherwise."""
+
         cur = self.conn.cursor()
         query = 'SELECT * FROM Student WHERE StudentNum = ?'
         # cur.execute expects a tuple for the second argument.  You will get an
@@ -104,6 +114,7 @@ class DatabaseManager:
         # tuple(student)
         cur.execute(query, (student_id,))
 
+        # retrieves the next row of a query result set
         row = cur.fetchone()
         if row:
             student_id, first_name, last_name = (row[0], row[1], row[2])
@@ -112,7 +123,8 @@ class DatabaseManager:
         return None
 
     def get_course(self, course_id):
-        """Return a Course object if it exists, None otherwise."""
+        """Return a Course object from the ID if it exists, None otherwise."""
+
         cur = self.conn.cursor()
         query = (
             'SELECT CourseNum, Name, Course.InstructorNum, FirstName, LastName '
@@ -120,7 +132,6 @@ class DatabaseManager:
             'JOIN Instructor ON Course.InstructorNum = Instructor.InstructorNum '
             'WHERE CourseNum = ?')
         cur.execute(query, (course_id,))
-
         row = cur.fetchone()
         if row:
             course_id, course_name = (row[0], row[1])
@@ -152,7 +163,7 @@ class DatabaseManager:
         return courses
 
     def get_course_by_student_id(self, student_id):
-        """Return a student's list of Courses """
+        """Return a student's list of Courses."""
         cur = self.conn.cursor()
         query = 'SELECT * FROM Student_Course WHERE StudentNum LIKE ?'
         cur.execute(query, (student_id,))
@@ -172,7 +183,7 @@ class DatabaseManager:
         self.conn.commit()
 
     def drop_course(self, studentID, CourseID):
-        """ Drop the course from the course list for the student."""
+        """Drop the course from the course list for the student."""
         cur = self.conn.cursor()
         query = ('DELETE FROM Student_Course '
                  '  WHERE CourseNum = ? '

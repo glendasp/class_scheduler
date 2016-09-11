@@ -1,11 +1,22 @@
+"""
+This class deals with the user interface and error checking of the input data
+gives couple of menu options and define each option to perform an action.
+
+"""
+
 from database import DatabaseManager
 
-# TODO: Might need a redesign if we want to get rid of this global.
 db = DatabaseManager('School.db')
 db.setup_db()
 
 
 def main_menu(student):
+    """
+    Display menu for user, checks if the user input is an integer and does
+    action basis option chosen.
+
+    """
+
     menu_string = (
         '\n\t** MAIN MENU **\n'
         '\nStudent: {} {}\n'
@@ -30,6 +41,8 @@ def main_menu(student):
 
 
 def register_course_menu(student):
+    """Sub-menu for register course option."""
+
     menu_string = (
         '\nREGISTER COURSE\n'
         '\t1) By Course ID\n'
@@ -38,6 +51,7 @@ def register_course_menu(student):
         '\nEnter Selection'
     )
 
+    # Loop to check the options entered by the user
     while True:
         menu_choice = get_user_int(menu_string, range(1, 4))
 
@@ -59,15 +73,19 @@ def register_course_menu(student):
 
 
 def drop_student_course_(student):
+    """Drop a course based on the course id entered by the user."""
+
     student_course_list = db.get_course_by_student_id(student.id)
 
+    # Print a meaningful message if the course list is empty.
     if len(student_course_list) == 0:
         print(student.full_name + " does not have any course in the list yet")
         return
     else:
+        # Display registered courses for the student
         print("The current course list for " + student.full_name)
-    for course in student_course_list:
-        print("\t{}.{} ".format(course.id, course.name))
+        for course in student_course_list:
+            print("\t{}.{} ".format(course.id, course.name))
 
     while True:
         drop_question = 'Enter course id to drop from the given course list'
@@ -82,8 +100,11 @@ def drop_student_course_(student):
 
 
 def display_schedule(student):
+    """Display the schedule for the current Student."""
+
     course_info = db.get_course_by_student_id(student.id)
 
+    # Print a meaningful message if the course list is empty.
     if len(course_info) == 0:
         print(student.full_name + " does not have any course in the list yet")
     else:
@@ -93,6 +114,8 @@ def display_schedule(student):
 
 
 def search_for_course(student):
+    """Search for a course by name."""
+
     course_name = get_user_string('Enter Course Name')
     courses = db.get_courses_by_name(course_name)
 
@@ -102,6 +125,7 @@ def search_for_course(student):
         # them to try again.  This gets messy pretty fast unless we figure out
         # a better way to do these menus.
         return
+
     while True:
         course_count = len(courses)
         menu_string = '\nSelect a course\n'
@@ -164,8 +188,13 @@ def get_user_string(message):
 
 
 def main():
-    student = None
+    """
+    Entry point which gets a Student and displays the name for the first time.
+    Calls menu method if the input is valid from the user.
 
+    """
+
+    student = None
     while True:
         student_id = get_user_int('Enter Student ID')
         student = db.get_student(student_id)

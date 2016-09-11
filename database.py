@@ -8,10 +8,6 @@ import sqlite3
 from models import Student, Course, Instructor
 
 
-# TODO: Needs a lot of exception handling!!!
-# A general helper method that does all the dirty work might be useful.
-
-
 class DatabaseManager:
     """Manages connecting and getting information from the database."""
 
@@ -97,7 +93,6 @@ class DatabaseManager:
 
         try:
             print('Creating tables...')
-            self.conn = sqlite3.connect('School.db')
             self.conn.executescript(sql_script)
             print("Table successfully created")
         except sqlite3.OperationalError as oe:
@@ -105,88 +100,107 @@ class DatabaseManager:
 
     def get_student(self, student_id):
         """Return a Student object from the ID if they exist, None otherwise."""
+        try:
+            cur = self.conn.cursor()
+            query = 'SELECT * FROM Student WHERE StudentNum = ?'
+            cur.execute(query, (student_id, ))
 
-        cur = self.conn.cursor()
-        query = 'SELECT * FROM Student WHERE StudentNum = ?'
-        # cur.execute expects a tuple for the second argument.  You will get an
-        # error if you only pass student_id.  Passing in (student_id, ) makes it
-        # a single item tuple.  Another way to do it would be to pass in
-        # tuple(student)
-        cur.execute(query, (student_id,))
+            row = cur.fetchone()
+            if row:
+                student_id, first_name, last_name = (row[0], row[1], row[2])
+                return Student(student_id, first_name, last_name)
 
-        # retrieves the next row of a query result set
-        row = cur.fetchone()
-        if row:
-            student_id, first_name, last_name = (row[0], row[1], row[2])
-            return Student(student_id, first_name, last_name)
-
-        return None
+        except sqlite3.OperationalError as oe:
+            print('Sql execution error', oe)
+        except sqlite3.Error as e:
+            print("Connection error ", e)
 
     def get_course(self, course_id):
         """Return a Course object from the ID if it exists, None otherwise."""
+        try:
+            cur = self.conn.cursor()
+            query = (
+                'SELECT CourseNum, Name, Course.InstructorNum, FirstName, LastName '
+                'FROM Course '
+                'JOIN Instructor ON Course.InstructorNum = Instructor.InstructorNum '
+                'WHERE CourseNum = ?'
+            )
+            cur.execute(query, (course_id, ))
 
-        cur = self.conn.cursor()
-        query = (
-            'SELECT CourseNum, Name, Course.InstructorNum, FirstName, LastName '
-            'FROM Course '
-            'JOIN Instructor ON Course.InstructorNum = Instructor.InstructorNum '
-            'WHERE CourseNum = ?')
-        cur.execute(query, (course_id,))
-        row = cur.fetchone()
-        if row:
-            course_id, course_name = (row[0], row[1])
-            instructor_id, first_name, last_name = (row[2], row[3], row[4])
-            instructor = Instructor(instructor_id, first_name, last_name)
-            return Course(course_id, course_name, instructor)
+            row = cur.fetchone()
+            if row:
+                course_id, course_name = (row[0], row[1])
+                instructor_id, first_name, last_name = (row[2], row[3], row[4])
+                instructor = Instructor(instructor_id, first_name, last_name)
+                return Course(course_id, course_name, instructor)
 
-        return None
+        except sqlite3.OperationalError as oe:
+            print('Sql execution error', oe)
+        except sqlite3.Error as e:
+            print("Connection error ", e)
 
     def get_courses_by_name(self, course_name):
         """Return a list of Courses that match the course_name."""
-        cur = self.conn.cursor()
-        # TODO: Query parameter might need some wildcards added.
-        query = (
-            'SELECT CourseNum, Name, Course.InstructorNum, FirstName, LastName '
-            'FROM Course '
-            'JOIN Instructor ON Course.InstructorNum = Instructor.InstructorNum '
-            'WHERE UPPER(Name) LIKE ?'
-        )
-        cur.execute(query, ('%{}%'.format(course_name.upper()),))
+        try:
+            cur = self.conn.cursor()
+            # TODO: Query parameter might need some wildcards added.
+            query = (
+                'SELECT CourseNum, Name, Course.InstructorNum, FirstName, LastName '
+                'FROM Course '
+                'JOIN Instructor ON Course.InstructorNum = Instructor.InstructorNum '
+                'WHERE UPPER(Name) LIKE ?'
+            )
+            cur.execute(query, ('%{}%'.format(course_name.upper()), ))
 
-        courses = []
-        for row in cur:
-            course_id, course_name = (row[0], row[1])
-            instructor_id, first_name, last_name = (row[2], row[3], row[4])
-            instructor = Instructor(instructor_id, first_name, last_name)
-            courses.append(Course(course_id, course_name, instructor))
+            courses = []
+            for row in cur:
+                course_id, course_name = (row[0], row[1])
+                instructor_id, first_name, last_name = (row[2], row[3], row[4])
+                instructor = Instructor(instructor_id, first_name, last_name)
+                courses.append(Course(course_id, course_name, instructor))
+            return courses
 
-        return courses
+        except sqlite3.OperationalError as oe:
+            print('Sql execution error', oe)
+        except sqlite3.Error as e:
+            print("Connection error ", e)
 
     def get_course_by_student_id(self, student_id):
         """Return a student's list of Courses."""
         cur = self.conn.cursor()
         query = 'SELECT * FROM Student_Course WHERE StudentNum LIKE ?'
-        cur.execute(query, (student_id,))
+        cur.execute(query, (student_id, ))
 
         courses_list = []
         for row in cur.fetchall():
             course_id = row[1]
             courses_list.append(self.get_course(course_id))
-
         return courses_list
 
     def register_course(self, student, course):
         """Register the Student to the Course."""
-        cur = self.conn.cursor()
-        query = 'INSERT INTO Student_Course VALUES (?, ?)'
-        cur.execute(query, (student.id, course.id))
-        self.conn.commit()
+        try:
+            cur = self.conn.cursor()
+            query = 'INSERT INTO Student_Course VALUES (?, ?)'
+            cur.execute(query, (student.id, course.id))
+            self.conn.commit()
+
+        except sqlite3.OperationalError as oe:
+            print('Sql execution error', oe)
+        except sqlite3.Error as e:
+            print("Connection error ", e)
 
     def drop_course(self, studentID, CourseID):
         """Drop the course from the course list for the student."""
-        cur = self.conn.cursor()
-        query = ('DELETE FROM Student_Course '
-                 '  WHERE CourseNum = ? '
-                 '  AND  StudentNum = ?')
-        cur.execute(query, (CourseID, studentID))
-        self.conn.commit()
+        try:
+            cur = self.conn.cursor()
+            query = ('DELETE FROM Student_Course '
+                     '  WHERE CourseNum = ? '
+                     '  AND  StudentNum = ?')
+            cur.execute(query, (CourseID, studentID))
+            self.conn.commit()
+
+        except sqlite3.OperationalError as oe:
+            print('Sql execution error', oe)
+        except sqlite3.Error as e:
+            print("Connection error ", e)

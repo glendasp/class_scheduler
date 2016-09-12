@@ -86,22 +86,28 @@ def drop_student_course_(student):
         print("The current course list for " + student.full_name)
         for course in student_course_list:
             print("\t{}.{} ".format(course.id, course.name))
-
     while True:
         drop_question = 'Enter course id to drop from the given course list'
         drop_course_id = get_user_int(drop_question)
-        student_course_idlist = [course.id for course in student_course_list]
-        if drop_course_id in student_course_idlist:
-            db.drop_course(student.id, drop_course_id)
-            print(str(db.get_course(drop_course_id).name) + " has been dropped from your current course list")
-            break
+        Confirmation_Message = input("Do You want to drop " + db.get_course(drop_course_id).name + " from your course list(Y/N)?")
+        if str(Confirmation_Message).upper() == 'Y':
+            student_course_idlist = [course.id for course in student_course_list]
+            if drop_course_id in student_course_idlist:
+                db.drop_course(student.id, drop_course_id)
+                print(str(db.get_course(drop_course_id).name) + " has been dropped from your current course list")
+                break
+            else:
+                print(" No course found with that ID in the list !!! please check the list carefully")
+        elif str(Confirmation_Message).upper() == 'N':
+            return
         else:
-            print(" No course found with that ID in the list !!! please check the list carefully")
+            print("Invalid entry")
+            continue
+    return
 
 
 def display_schedule(student):
     """Display the schedule for the current Student."""
-
     course_info = db.get_course_by_student_id(student.id)
 
     # Print a meaningful message if the course list is empty.
